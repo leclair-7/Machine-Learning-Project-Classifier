@@ -1,3 +1,9 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Wed May  4 03:26:55 2016
+
+@author: Lucas
+"""
 
 '''
 By: Lucas Hagel
@@ -32,21 +38,30 @@ sel = VarianceThreshold(threshold=(theIndex * (1 - theIndex)))
 dataPre = np.loadtxt("train.nmv.txt")    
 data = sel.fit_transform(dataPre)  
 
-print(len(sel.get_support() )  )
-  
-y = [ row[-1] for row in data]
-X = [residual[:-1] for residual in data ]    
-n_split = 1800    
-X_train, X_test = X[:n_split], X[n_split:]
-Y_train, Y_test = y[:n_split], y[n_split:]
+guillotine = sel.get_support()
 
-clf = LinearSVC(penalty='l1', loss='squared_hinge', dual=False,tol=1e-3)
-clf.fit(X_train, Y_train)
+print("data len: ", len(data[0]))
+
+prelimData = np.genfromtxt("prelim-nmv-noclass.txt")
+prelimData = [i[:-1] for i in prelimData]    
+prelimData = np.array(prelimData)
+
+assert len(guillotine) == len(prelimData[0])
+
+for i in range(len(guillotine)):
+    #print(i, guillotine[i])
+    if guillotine[len(guillotine)-1-i] == False:        
+       prelimData = np.delete(prelimData, len(guillotine)-1-i, axis=1) 
+        
+print("data len: ", len(prelimData[0]))
 
 
-temp= clf.score(X_test, Y_test)
+'''
+arr = np.array([[1,2,3,4], [5,6,7,8], [9,10,11,12]])
+print(arr)
+arr = np.delete(arr, 1, axis=1)
+print("postDeletion")
+print(arr)
 
-#Best LinearSVC Accuracy is:  [50, 0.9243055555555556]    
-print("LinearSVC Accuracy is: ", temp)
-
+'''
 
