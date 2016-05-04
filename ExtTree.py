@@ -19,12 +19,12 @@ import warnings
 warnings.filterwarnings("ignore", category=DeprecationWarning)
 
 maxAcc = [0,0.0,0]
-for r in range( 10,995,10):
+for r in range( 300,995,50):
     theIndex = r/ 1000.0
     
     sel = VarianceThreshold(threshold=(theIndex* (1 - theIndex)))
     
-    '''
+    
     dataPre = np.loadtxt("train.nmv.txt")    
     data = sel.fit_transform(dataPre)
     
@@ -34,31 +34,8 @@ for r in range( 10,995,10):
     
     X_train, X_test = X[:n_split], X[n_split:]
     Y_train, Y_test = y[:n_split], y[n_split:]
-    '''
-    dataPre = np.loadtxt("train.nmv.txt")
-    prelimData = np.genfromtxt("prelim-nmv-noclass.txt")
-    prelimData = [i[:-1] for i in prelimData]
     
-    prelimData = np.array(prelimData)
-    
-    classVec = [ row[-1] for row in dataPre]
-    data = [residual[:-1] for residual in dataPre ]
-    
-    forFeaturetakeup = np.concatenate((data, prelimData), axis =0)    
-    
-    
-    sel = VarianceThreshold(threshold=(theIndex * (1 - theIndex)))
-    
-    data = sel.fit_transform(forFeaturetakeup)
-    
-    prelimSet = data[4000:]
-    data = data[:-4000]
-    
-    n_split = 1800
-    X_test, X_train = data[:n_split], data[n_split:]
-    Y_test, Y_train = classVec[:n_split], classVec[n_split:]
-    
-    for numFeatures in range(40,200,10):
+    for numFeatures in range(40,200,40):
         if numFeatures % 10 ==0:
             print("testing  ", numFeatures,"features,",r ," is variance tested")
         #model = LogisticRegression()
@@ -75,7 +52,10 @@ for r in range( 10,995,10):
             maxAcc[0] = r
             maxAcc[1] = temp
             maxAcc[2] = numFeatures
+#Best ExtraTrees Accuracy is:  [400, 0.98902777777777773, 40]            
 print("Best ExtraTrees Accuracy is: ", maxAcc)
+
+
 
 # display the relative importance of each attribute
 #print(model.feature_importances_)
