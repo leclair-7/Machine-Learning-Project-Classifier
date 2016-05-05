@@ -81,6 +81,7 @@ rfe = rfe.fit(X_train,Y_train)
 temp = rfe.score(X_test, Y_test)
 predictionOfPrelim = rfe.predict(prelimData)
 
+featureRanking = rfe.ranking_
 #Best ExtraTrees Accuracy is:  [400, 0.98902777777777773, 40]            
 print("ExtraTrees Accuracy is: ", temp)
 
