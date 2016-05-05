@@ -30,6 +30,10 @@ print(len(AllData))
 print(len(fullPrelim), len(fullPrelim[0]))
 print(len(AllData[0]))
 '''
-thefile = open('AllData.txt', 'w')
-for item in AllData:
-  thefile.write("%s\n" % item)
+
+
+with open("AllData.txt","w") as f:
+   for item in AllData:
+		line = " ".join([str(x) for x in item])
+		line += "\n"
+		f.write(line)
