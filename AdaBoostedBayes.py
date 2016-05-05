@@ -16,72 +16,79 @@ accuracy number 0.607777777778
 number of classifiers 120
 learning rate for classifiers 1
 '''
+r = 50.0    
+theIndex = r/ 100.0
 
-maxAcc = [0,0.0,0, 0]
-for r in range( 40,95,10):
-    theIndex = r/ 100.0
-    
-    sel = VarianceThreshold(threshold=(theIndex* (1 - theIndex)))
-    
-    dataPre = np.loadtxt("train.nmv.txt")    
-    data = sel.fit_transform(dataPre)
-    
-    y = [ row[-1] for row in data]
-    X = [residual[:-1] for residual in data ]    
-    n_split = 1800
-    
-    X_train, X_test = X[:n_split], X[n_split:]
-    Y_train, Y_test = y[:n_split], y[n_split:]
-    '''
-    dataPre = np.loadtxt("train.nmv.txt")
-    prelimData = np.genfromtxt("prelim-nmv-noclass.txt")
-    prelimData = [i[:-1] for i in prelimData]
-    
-    prelimData = np.array(prelimData)
-    
-    classVec = [ row[-1] for row in dataPre]
-    data = [residual[:-1] for residual in dataPre ]
-    
-    forFeaturetakeup = np.concatenate((data, prelimData), axis =0)    
-    sel = VarianceThreshold(threshold=(theIndex * (1 - theIndex)))    
-    data = sel.fit_transform(forFeaturetakeup)    
-    prelimSet = data[4000:]
-    data = data[:-4000]
-    
-    n_split = 1800
-    X_test, X_train = data[:n_split], data[n_split:]
-    Y_test, Y_train = classVec[:n_split], classVec[n_split:]
-    '''
+sel = VarianceThreshold(threshold=(theIndex* (1 - theIndex)))
 
-    p=0
-    for numClassifiers in range(200,700,50):
-        print(r, numClassifiers)
-        p+=1
-        model = AdaBoostClassifier(
-            GaussianNB(),
-            n_estimators=numClassifiers,
-            learning_rate= 1 )
 
-        model.fit(X_train, Y_train)
+data = np.loadtxt("train.nmv.txt")
+firstData = data.copy()
+tagUno = [ row[-1] for row in data]
+tagUno = np.array([tagUno])
+#arr = np.concatenate(  (arr , for_arr.T ), axis =1)
 
-        tryBest = model.score(X_test,Y_test)
-        if  tryBest > maxAcc[1]:
-                maxAcc[0] = r                    
-                maxAcc[1] = tryBest
-                maxAcc[2] = numClassifiers
-                maxAcc[3] = 1
 '''
-Best AdaBoosted GaussianNB Accuracy is: 
-Parameters are:
-For variance threshold split 50
-accuracy number 0.819722222222
-number of classifiers 450
-learning rate for classifiers 1
+Idea : -Save class labels which will be used
+after the fit_transform thing 
+cuts the poor variance labels down
+'''    
+data = sel.fit_transform(data)
+data = np.concatenate(  (data , tagUno.T ), axis =1)
+guillotine = sel.get_support()
+
+prelimData = np.genfromtxt("prelim-nmv-noclass.txt")
+prelimData = [i[:-1] for i in prelimData]    
+prelimData = np.array(prelimData)
+
+#guillotine = guillotine[:-1]
+#assert len(guillotine) == len(prelimData[:-1])
+guillotine_full = guillotine.copy()
+guillotine = guillotine[:-1]
+
 '''
-print("Best AdaBoosted GaussianNB Accuracy is: ")
-print("Parameters are:")
-print("For variance threshold split",maxAcc[0])
-print("accuracy number", maxAcc[1])
-print("number of classifiers",maxAcc[2])
-print("learning rate for classifiers", maxAcc[3])
+#assigning this to prelimData verifies that we collapse the
+#preliminary test set correctly
+prelimData = firstData.copy()[:-1]
+'''
+
+for i in range(len(guillotine)):
+    #print(i, guillotine[i])
+    if guillotine[len(guillotine)-1-i] == False:        
+       prelimData = np.delete(prelimData, len(guillotine)-1-i, axis=1)
+       
+#if may not need a deep copy
+y = [ row[-1] for row in data]
+X = [residual[:-1] for residual in data ]    
+n_split = 1800    
+X_train, X_test = X[:n_split], X[n_split:]
+Y_train, Y_test = y[:n_split], y[n_split:]
+
+numClassifiers = 450
+model = AdaBoostClassifier(
+    GaussianNB(),
+    n_estimators=numClassifiers,
+    learning_rate= 1 )
+
+model.fit(X_train, Y_train)
+
+temp = model.score(X_test,Y_test)
+print("Accuracy on AdaBoosted GaussianNB is: ", temp)
+'''
+predictionOfPrelim = model.predict(prelimData)
+
+prelimClasses = np.loadtxt("prelim-class.txt")
+assert len(prelimClasses) == len(predictionOfPrelim)
+h = []
+for i in range(len(prelimClasses)):
+    if prelimClasses[i] == predictionOfPrelim[i]:
+        h.append(1)
+    else:
+        h.append(0)
+
+thefile = open('BayesAdaBoost_prelim_Result.txt', 'w')
+for item in h:
+  thefile.write("%s\n" % item)
+'''
+
 
