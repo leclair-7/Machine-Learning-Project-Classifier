@@ -7,7 +7,6 @@ Created on Tue Apr 26 21:15:57 2016
 variance threshold with an ExtraTreesClassifier
 -- brute force search of good parameters -- 
 """
-
 from sklearn import datasets
 from sklearn import metrics
 from sklearn.ensemble import ExtraTreesClassifier
@@ -21,8 +20,6 @@ warnings.filterwarnings("ignore", category=DeprecationWarning)
 r = 400
 theIndex = r/ 1000.0
 sel = VarianceThreshold(threshold=(theIndex* (1 - theIndex)))
-
-
 
 data = np.loadtxt("train.nmv.txt")
 firstData = data.copy()
@@ -98,11 +95,3 @@ thefile = open('Result_ExtraTrees_prelim.txt', 'w')
 for item in h:
   thefile.write("%s\n" % item) 
 
-
-
-# display the relative importance of each attribute
-#print(model.feature_importances_)
-'''
-print('Training accuracy:', model.score(X_train, Y_train))
-print('Test accuracy:', model.score(X_test, Y_test))
-'''

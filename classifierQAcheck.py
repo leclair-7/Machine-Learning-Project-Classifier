@@ -14,11 +14,9 @@ LogistRegRes = np.loadtxt('Result_LogisticRegres_prelim_.txt')
 #for some reason adaBoost-Bayes sucks balls ~50%, this didn't seem to be the case 10 minutes ago
 #ada_bayesRes = np.loadtxt('BayesAdaBoost_prelim_Result.txt')
 
-
 assert len(ExtraTreeRes) == len(linearSVCRes) and len(LogistRegRes) == len(linearSVCRes)
 
 signal = [0] * len(linearSVCRes)
-
 num0total =0
 num1total =0
 for i in range(len(linearSVCRes) ):

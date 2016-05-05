@@ -64,31 +64,17 @@ n_split = 1800
 X_train, X_test = X[:n_split], X[n_split:]
 Y_train, Y_test = y[:n_split], y[n_split:]
 
+'''
 numClassifiers = 450
 model = AdaBoostClassifier(
     GaussianNB(),
     n_estimators=numClassifiers,
     learning_rate= 1 )
-
+'''
 model.fit(X_train, Y_train)
 
 temp = model.score(X_test,Y_test)
 print("Accuracy on AdaBoosted GaussianNB is: ", temp)
-'''
-predictionOfPrelim = model.predict(prelimData)
 
-prelimClasses = np.loadtxt("prelim-class.txt")
-assert len(prelimClasses) == len(predictionOfPrelim)
-h = []
-for i in range(len(prelimClasses)):
-    if prelimClasses[i] == predictionOfPrelim[i]:
-        h.append(1)
-    else:
-        h.append(0)
-
-thefile = open('BayesAdaBoost_prelim_Result.txt', 'w')
-for item in h:
-  thefile.write("%s\n" % item)
-'''
 
 

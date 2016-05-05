@@ -24,16 +24,12 @@ fullPrelim = np.concatenate( (prelimData, prelimClasses.T), axis = 1)
 
 AllData = np.concatenate((data, fullPrelim),axis=0)
 
+'''
+#These prints show the data is combining correctly
 print(len(AllData))
 print(len(fullPrelim), len(fullPrelim[0]))
 print(len(AllData[0]))
-
+'''
 thefile = open('AllData.txt', 'w')
 for item in AllData:
   thefile.write("%s\n" % item)
-
-
-
-
-
-
